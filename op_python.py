@@ -1,5 +1,6 @@
 import subprocess
 import random
+import sys
 
 def randomport():
     num = random.randint(5999,6999)
@@ -23,7 +24,7 @@ directory = cmd.stdout.strip()
 directory = f"{directory}/deployments"
 cmd = subprocess.run(f"mkdir {directory}",capture_output=True,text=True,shell=True)
 print("Directory Created")
-git_url = input("Enter the Git URL > ")
+git_url = sys.argv[-1]  #input("Enter the Git URL > ")
 if ".git" in git_url:
     print("Cloning the Github Repository")
     try:
@@ -46,27 +47,40 @@ if ".git" in git_url:
                     try:
                         with open(f"{git_directory}/entrypoint") as file:
                             list = file.read().split()
-                            print(len(list))
-                            if len(list) == 2:
+                            if list[0] == "gunicorn":
+                                arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
+                                arg2 = list[-1]
+                                entrypoint = (f"{arg1} {arg2} --bind 0.0.0.0")
+                                entrypoint = (f"cd {git_directory} && nohup {entrypoint}")
+                                print("Your Application is Running on 0.0.0.0:8000")
+                                cmd = subprocess.run(entrypoint,shell=True)
+                            else:
                                 arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
                                 arg2 = list[-1]
                                 entrypoint = (f"{arg1} {arg2}")
-                            if len(list) == 4:
-                                arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
-                                arg2 = list[-1]
-                                if checkport(5995) == True:
-                                    entrypoint = (f"{arg1} {list[1]} {list[2]} {arg2}")
-                                    entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
-                                    print("Starting Your Application...")
-                                    print("Your Application Will be Running On 192.168.1.105:5995")
-                                    cmd = subprocess.run(entrypoint,shell=True)
-                                else:
-                                    port = str(randomport())
-                                    entrypoint = (f"{arg1} {list[1]} {list[2]} {arg2}").replace("5995",port)
-                                    entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
-                                    print("Starting Your Application...")
-                                    print(f"Your Application Will be Running On 192.168.1.105:{port}")
-                                    cmd = subprocess.run(entrypoint,shell=True)
+                                entrypoint = (f"cd {git_directory} && nohup {entrypoint}")
+                                print("Your Application is Deployed")
+                                cmd = subprocess.run(entrypoint,shell=True)
+                            # if len(list) == 2:
+                            #     arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
+                            #     arg2 = list[-1]
+                            #     entrypoint = (f"{arg1} {arg2}")
+                            # if len(list) == 4:
+                            #     arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
+                            #     arg2 = list[-1]
+                            #     if checkport(5995) == True:
+                            #         entrypoint = (f"{arg1} {list[1]} {list[2]} {arg2}")
+                            #         entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
+                            #         print("Starting Your Application...")
+                            #         print("Your Application Will be Running On 192.168.1.105:5995")
+                            #         cmd = subprocess.run(entrypoint,shell=True)
+                            #     else:
+                            #         port = str(randomport())
+                            #         entrypoint = (f"{arg1} {list[1]} {list[2]} {arg2}").replace("5995",port)
+                            #         entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
+                            #         print("Starting Your Application...")
+                            #         print(f"Your Application Will be Running On 192.168.1.105:{port}")
+                            #         cmd = subprocess.run(entrypoint,shell=True)
                     except:
                         print("Application Failed..")
                 except:
@@ -79,3 +93,30 @@ if ".git" in git_url:
         print("Repository Cloning Failed")
 else:
     print("Please Enter a Git URL")
+
+
+
+                    # try:
+                    #     with open(f"{git_directory}/entrypoint") as file:
+                    #         list = file.read().split()
+                    #         print(len(list))
+                    #         if len(list) == 2:
+                    #             arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
+                    #             arg2 = list[-1]
+                    #             entrypoint = (f"{arg1} {arg2}")
+                    #         if len(list) == 4:
+                    #             arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
+                    #             arg2 = list[-1]
+                    #             if checkport(5995) == True:
+                    #                 entrypoint = (f"{arg1} {list[1]} {list[2]} {arg2}")
+                    #                 entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
+                    #                 print("Starting Your Application...")
+                    #                 print("Your Application Will be Running On 192.168.1.105:5995")
+                    #                 cmd = subprocess.run(entrypoint,shell=True)
+                    #             else:
+                    #                 port = str(randomport())
+                    #                 entrypoint = (f"{arg1} {list[1]} {list[2]} {arg2}").replace("5995",port)
+                    #                 entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
+                    #                 print("Starting Your Application...")
+                    #                 print(f"Your Application Will be Running On 192.168.1.105:{port}")
+                    #                 cmd = subprocess.run(entrypoint,shell=True)
