@@ -9,6 +9,6 @@ option = int(input("Enter the option > "))
 if option == 1:
     gen_cert()
 elif option ==2 : 
-    available_devices()
+    added_devices()
 # else:
     # op_flask()

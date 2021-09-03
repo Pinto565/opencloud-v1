@@ -3,6 +3,16 @@ import smtplib
 from ip_addr import generate_tun_ip
 from email.message import EmailMessage
 
+
+def cert_json(name , email , status):
+    op = {
+        "name" : name , 
+        "email" : email , 
+        "status" : status
+    }
+    return op
+
+
 def send_mail(name,r_mail):
     s_mail = "infantvalan02@gmail.com"
     s_pass = "krttcisguxjxkror"
@@ -26,15 +36,28 @@ def send_mail(name,r_mail):
     except:
         print("Mail Not Sent")
 
-def gen_cert():
-    name = input("Enter the Client Name > ")
+def gen_cert(name , email):
+    name = name #("Enter the Client Name > ")
     # tun_ip = input("Enter Your Desired IP > ")
     # tun_ip = str(tun_ip)
-    tun_ip = generate_tun_ip()
-    email = input("Enter your Mail Address > ")
-    name = name.replace(" ","").lower()
-    process = subprocess.run(f"sudo bash vpn.sh {name}",shell=True)
-    process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{name}",shell=True)
-    process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{name}.crt",shell=True)
-    name = name.upper()
-    send_mail(name,email)
+    email = email #input("Enter your Mail Address > ")
+    lower_name = name.replace(" ","").lower()
+    try:
+        tun_ip = generate_tun_ip()
+        process = subprocess.run(f"sudo bash vpn.sh {lower_name}",shell=True)
+        process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_name}",shell=True)
+        process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_name}.crt",shell=True)
+        send_mail(name,email)
+        op = cert_json(name , email , True)
+        return op
+    except:
+        cert_json(name , email , False)
+        op = cert_json(name , email , False)
+        return op
+
+def bad_request(reason):
+    op = {
+        "status" : 200,
+        "comment" : reason
+    }
+    return op
