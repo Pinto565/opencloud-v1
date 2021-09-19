@@ -1,1 +1,3 @@
 deployments/
+venv/
+__pycache__/

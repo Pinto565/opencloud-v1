@@ -22,7 +22,7 @@ def send_mail(name,r_mail):
     msg['From'] = "OpenCloud"
     msg['To'] = r_mail
     msg.set_content(message)
-    with open(f"{name}.ovpn","rb") as file:
+    with open(f"~/{name}.ovpn","rb") as file:
         data = file.read()
         cert_name = file.name
         msg.add_attachment(data,maintype = "application", subtype = "ovpn",filename = cert_name)

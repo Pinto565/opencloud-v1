@@ -1,4 +1,3 @@
-import re
 from flask import *
 from ip_addr import *
 from pyvpn import *
@@ -25,7 +24,9 @@ def certificate_generation():
             email = request.args.get("email") 
             return jsonify(gen_cert(name, email))
         else:
-            return jsonify(bad_request("No Arguments Passed"))
+            return "Invalid Request"
+    else:
+        return "Invalid Request"
 
 @app.route("/deploy/flask")
 def flask_deployment():
@@ -33,11 +34,12 @@ def flask_deployment():
         if "giturl" and "device" in request.args:
             giturl = request.args.get("giturl")
             device = request.args.get("device")
-            username = get_ssh(device)
-            command = f"cat op_python.py | ssh {username}@{device} python3 - {giturl}"
+            command = f"cat op_python.py | ssh {device} python3 - {giturl}"
             return command
         else:
-            return jsonify(bad_request("No Arguments Passed"))
+            return "Invalid Request"
+    else:
+        return "Invalid Request"
 
 if __name__ == '__main__':
     app.debug = True
