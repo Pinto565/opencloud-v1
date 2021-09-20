@@ -34,8 +34,11 @@ def flask_deployment():
         if "giturl" and "device" in request.args:
             giturl = request.args.get("giturl")
             device = request.args.get("device")
-            command = f"cat op_python.py | ssh {device} python3 - {giturl}"
-            return command
+            try:
+                command = f"cat op_python.py | ssh {device} python3 - {giturl}"
+                return command
+            except:
+                return "Process Failed"
         else:
             return "Invalid Request"
     else:
