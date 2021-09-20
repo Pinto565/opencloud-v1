@@ -11,38 +11,61 @@ app = Flask(__name__)
 def hello_world():
     return "Welcome to OpenCloud"
 
+
 @app.route("/devices/available")
 def devices_available():
     update_status()
     return jsonify(status)
 
+
 @app.route("/certificate")
 def certificate_generation():
     if request.method == "POST" or request.method == "GET":
-        if "name" and "email" in request.args:
+        if "name"  in request.args and "email" in request.args :
             name = request.args.get("name")
-            email = request.args.get("email") 
+            email = request.args.get("email")
             return jsonify(gen_cert(name, email))
         else:
-            return "Invalid Request"
+            result = {
+                "status": "parameters missing"
+            }
+            return jsonify(result)
     else:
-        return "Invalid Request"
+        result = {
+            "status": "method not allowed"
+        }
+        return jsonify(result)
+
 
 @app.route("/deploy/flask")
 def flask_deployment():
     if request.method == "POST" or request.method == "GET":
-        if "giturl" and "device" in request.args:
+        if "giturl" in request.args and "device" in request.args:
             giturl = request.args.get("giturl")
             device = request.args.get("device")
             try:
                 command = f"cat op_python.py | ssh {device} python3 - {giturl}"
-                return command
+                #command = "cat op_python.py | ssh " + device + " python3 - "+ giturl
+                result = {
+                    "status": "deployed successfully"
+                }
+                return jsonify(result)
             except:
-                return "Process Failed"
+                result = {
+                    "status": "deployment failed"
+                }
+                return jsonify(result)
         else:
-            return "Invalid Request"
+            result = {
+                "status": "parameters missing"
+            }
+            return jsonify(result)
     else:
-        return "Invalid Request"
+        result = {
+            "status": "method not allowed"
+        }
+        return jsonify(result)
+
 
 if __name__ == '__main__':
     app.debug = True
