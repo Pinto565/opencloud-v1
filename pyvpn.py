@@ -51,7 +51,6 @@ def gen_cert(name , email):
         op = cert_json(name , email , True)
         return op
     except:
-        cert_json(name , email , False)
         op = cert_json(name , email , False)
         return op
 
