@@ -1,3 +1,4 @@
+import re
 from flask import *
 from ip_addr import *
 from pyvpn import *
@@ -36,6 +37,26 @@ def certificate_generation():
             "status": "method not allowed"
         }
         return jsonify(result)
+
+
+@app.route("/deploy/sshd")
+def sshd_deployment():
+    if request.method == "POST" or request.method == "GET":
+        if "device" in request.args and "port" in request.args:
+            device = request.args.get("device")
+            port = request.args.get("port")
+            try:
+                write_conf("8022",device,port)
+                result = {
+                    "status": "deployed successfully"
+                }
+                return jsonify(result)
+            except:
+                result = {
+                    "status": "deployment failed"
+                }
+                return jsonify(result)
+
 
 
 @app.route("/deploy/flask")
