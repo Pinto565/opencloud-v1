@@ -4,6 +4,8 @@ from pyvpn import *
 from available import *
 from op_python import *
 from haproxy_conf import *
+from exec_comm import *
+
 
 app = Flask(__name__)
 
@@ -17,6 +19,16 @@ def hello_world():
 def devices_available():
     update_status()
     return jsonify(status)
+
+
+@app.route("/ssh_key")
+def get_sshkey():
+    try:
+        cmd = "cat /root/.ssh/id_rsa.pub"
+        output = comm(cmd)
+        return output
+    except:
+        return "request failed"
 
 
 @app.route("/certificate")
@@ -57,7 +69,6 @@ def sshd_deployment():
                 return jsonify(result)
 
 
-
 @app.route("/deploy/flask")
 def flask_deployment():
     if request.method == "POST" or request.method == "GET":
@@ -67,9 +78,11 @@ def flask_deployment():
             try:
                 command = f"cat op_python.py | ssh {device} python3 - {giturl}"
                 #command = "cat op_python.py | ssh " + device + " python3 - "+ giturl
+                output = comm(command)
                 write_conf("80",device,"8000")
                 result = {
-                    "status": "deployed successfully"
+                    "status": "deployed successfully",
+                    "logs":output
                 }
                 return jsonify(result)
             except:
