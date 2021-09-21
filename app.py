@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return "Welcome to OpenCloud"
+    return "Opencloud API is up and running"
 
 
 @app.route("/devices/available")
@@ -67,6 +67,16 @@ def sshd_deployment():
                     "status": "deployment failed"
                 }
                 return jsonify(result)
+        else:
+            result = {
+                "status": "parameters missing"
+            }
+            return jsonify(result)
+    else:
+        result = {
+            "status": "method not allowed"
+        }
+        return jsonify(result)
 
 
 @app.route("/deploy/flask")
