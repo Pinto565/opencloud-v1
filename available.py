@@ -36,17 +36,17 @@ def update_status():
     status["updated_time"] = time()
     for host in hosts:
         try:
-            ip_addr = socket.gethostbyname(host)
+            # ip_addr = socket.gethostbyname(host)
             devicestatus = {
             "host" : host ,
-            "ip_address" : ip_addr ,
+            # "ip_address" : ip_addr ,
             "status" : pinghost(host)
         }
         except:
-            ip_addr = "Host Not Found"
+            # ip_addr = "Host Not Found"
             devicestatus = {
             "host" : host ,
-            "ip_address" : ip_addr ,
+            # "ip_address" : ip_addr ,
             "status" : "offline"
         }
         status["device_status"].append(devicestatus)

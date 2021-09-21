@@ -2,24 +2,6 @@ import subprocess
 import random
 import sys
 
-# def randomport():
-#     num = random.randint(5999,6999)
-#     if checkport(num) == True:
-#         return num
-#     else:
-#         randomport()
-
-# def checkport(port):
-#     cmd = f"netstat -an | grep {port}"
-#     process = subprocess.run(cmd,shell=True,capture_output=True,text=True)
-#     op = process.stdout.split()
-#     if len(op) == 0:
-#         return True
-#     else:
-#         return False
-
-
-# def op_flask():
 cmd = subprocess.run("pwd",capture_output=True,text=True,shell=True)
 directory = cmd.stdout.strip()
 directory = f"{directory}/deployments"
