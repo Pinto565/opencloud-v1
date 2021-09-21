@@ -1,4 +1,3 @@
-import re
 from flask import *
 from ip_addr import *
 from pyvpn import *
