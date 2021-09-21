@@ -1,7 +1,0 @@
--- SignIn
--- >
-    - Enroll Device
-    - Available Devices
-    - Deploy Application
-        * Flask
-        * HTML
