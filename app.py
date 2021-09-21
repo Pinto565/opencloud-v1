@@ -3,6 +3,7 @@ from ip_addr import *
 from pyvpn import *
 from available import *
 from op_python import *
+from haproxy_conf import *
 
 app = Flask(__name__)
 
@@ -46,6 +47,7 @@ def flask_deployment():
             try:
                 command = f"cat op_python.py | ssh {device} python3 - {giturl}"
                 #command = "cat op_python.py | ssh " + device + " python3 - "+ giturl
+                write_conf("80",device,"8000")
                 result = {
                     "status": "deployed successfully"
                 }
