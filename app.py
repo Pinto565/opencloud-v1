@@ -5,6 +5,7 @@ from available import *
 from op_python import *
 from haproxy_conf import *
 from exec_comm import *
+from ports import *
 
 
 app = Flask(__name__)
@@ -56,10 +57,12 @@ def sshd_deployment():
         if "device" in request.args and "port" in request.args:
             device = request.args.get("device")
             port = request.args.get("port")
+            public_port = port_allocation()
             try:
-                write_conf("8022",device,port)
+                write_conf(public_port,device,port)
                 result = {
-                    "status": "deployed successfully"
+                    "status": "deployed successfully",
+                    "public_port" : public_port
                 }
                 return jsonify(result)
             except:
@@ -85,13 +88,15 @@ def flask_deployment():
         if "giturl" in request.args and "device" in request.args:
             giturl = request.args.get("giturl")
             device = request.args.get("device")
+            public_port = port_allocation()
             try:
                 command = f"cat op_python.py | ssh {device} python3 - {giturl}"
                 #command = "cat op_python.py | ssh " + device + " python3 - "+ giturl
                 output = comm(command)
-                write_conf("80",device,"8000")
+                write_conf(public_port,device,"8000")
                 result = {
                     "status": "deployed successfully",
+                    "public_port" : public_port,
                     "logs":output
                 }
                 return jsonify(result)
