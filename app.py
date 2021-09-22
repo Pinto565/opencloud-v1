@@ -90,7 +90,7 @@ def flask_deployment():
             device = request.args.get("device")
             public_port = port_allocation()
             try:
-                command = f"cat op_python.py | ssh {device} python3 - {giturl}"
+                command = f"cat /root/opencloud_be/op_python.py | ssh {device} python3 - {giturl}"
                 #command = "cat op_python.py | ssh " + device + " python3 - "+ giturl
                 output = comm(command)
                 write_conf(public_port,device,"8000")
