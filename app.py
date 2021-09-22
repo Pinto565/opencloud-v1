@@ -62,21 +62,13 @@ def sshd_deployment():
         if "device" in request.args and "port" in request.args:
             device = request.args.get("device")
             port = request.args.get("port")
-            # public_port = port_allocation()
-            #try:
             web_addr = write_ssh_conf(device,port)
             result = {
                 "status": "deployed successfully",
-                # "public_port" : public_port,
                 "public_site" : web_addr,
                 "type" : "ssh"
             }
             return jsonify(result)
-            # except:
-            #     result = {
-            #         "status": "deployment failed"
-            #     }
-            #     return jsonify(result)
         else:
             result = {
                 "status": "parameters missing"
@@ -95,24 +87,15 @@ def flask_deployment():
         if "giturl" in request.args and "device" in request.args:
             giturl = request.args.get("giturl")
             device = request.args.get("device")
-            # public_port = port_allocation()
-            #try:
             command = f"cat /root/opencloud_be/op_python.py | ssh {device} python3 - {giturl}"
-            #command = "cat op_python.py | ssh " + device + " python3 - "+ giturl
             output = comm(command)
             web_addr = write_http_conf(device,"8000")
             result = {
                 "status": "deployed successfully",
-                # "public_port" : public_port,
                 "public_site" : web_addr,
                 "logs":output
             }
             return jsonify(result)
-            # except:
-            #     result = {
-            #         "status": "deployment failed"
-            #     }
-            #     return jsonify(result)
         else:
             result = {
                 "status": "parameters missing"
