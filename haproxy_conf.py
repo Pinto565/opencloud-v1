@@ -10,7 +10,6 @@ def random_code():
 def write_http_conf(device,dev_port):
   file = open(conf_file, "a")
   id = random_code()
-  # file.truncate(0)
   public_add = f"{id}.node.opencloud.world"
   file.write(f"\nbackend {public_add}")
   file.write(f"\n   server {id}      {device}:{dev_port}\n")
