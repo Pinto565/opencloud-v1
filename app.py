@@ -63,6 +63,8 @@ def sshd_deployment():
             device = request.args.get("device")
             port = request.args.get("port")
             web_addr = write_ssh_conf(device,port)
+            command = "systemctl restart haproxy"
+            comm(command)
             result = {
                 "status": "deployed successfully",
                 "public_site" : web_addr,
@@ -90,6 +92,8 @@ def flask_deployment():
             command = f"cat /root/opencloud_be/op_python.py | ssh {device} python3 - {giturl}"
             output = comm(command)
             web_addr = write_http_conf(device,"8000")
+            command = "systemctl restart haproxy"
+            comm(command)
             result = {
                 "status": "deployed successfully",
                 "public_site" : web_addr,
