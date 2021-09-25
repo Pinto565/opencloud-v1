@@ -16,16 +16,16 @@ def cert_json(name , email , ip,status):
 
 def send_mail(name,r_mail):
     s_mail = "infantvalan02@gmail.com"
-    s_pass = "krttcisguxjxkror"
+    s_pass = "pmrdsejaymicrtoj"
     message = f"Hello...{name} . Thank You For Registering . Find the VPN Certificate below"
     msg=EmailMessage()
     msg['Subject'] = "Mail From Opencloud"
     msg['From'] = "OpenCloud"
     msg['To'] = r_mail
     msg.set_content(message)
-    with open(f"~/{name}.ovpn","rb") as file:
+    with open(f"/root/{name}.ovpn","rb") as file:
         data = file.read()
-        cert_name = file.name
+        cert_name = f"{name}.ovpn"
         msg.add_attachment(data,maintype = "application", subtype = "ovpn",filename = cert_name)
     server = smtplib.SMTP_SSL("smtp.gmail.com",465)
     try:
@@ -43,17 +43,17 @@ def gen_cert(name , email):
     # tun_ip = str(tun_ip)
     email = email #input("Enter your Mail Address > ")
     lower_name = name.replace(" ","").lower()
-    try:
-        tun_ip = generate_tun_ip()
-        process = subprocess.run(f"sudo bash vpn.sh {lower_name}",shell=True)
-        process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_name}",shell=True)
-        process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_name}.crt",shell=True)
-        send_mail(name,email)
-        op = cert_json(name , email ,tun_ip, True)
-        return op
-    except:
-        op = cert_json(name , email ,tun_ip, False)
-        return op
+    # try:
+    tun_ip = generate_tun_ip()
+    process = subprocess.run(f"./vpn.sh {lower_name}",shell=True)
+    process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_name}",shell=True)
+    process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_name}.crt",shell=True)
+    send_mail(name,email)
+    op = cert_json(lower_name , email ,tun_ip, True)
+    return op
+    # except:
+    #     op = cert_json(lower_name , email ,tun_ip, False)
+    #     return op
 
 def bad_request(reason):
     op = {
