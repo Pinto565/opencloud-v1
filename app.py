@@ -10,6 +10,12 @@ from ports import *
 
 app = Flask(__name__)
 
+@app.after_request
+def after_request_func(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
 
 @app.route('/')
 def hello_world():
@@ -64,7 +70,7 @@ def sshd_deployment():
             port = request.args.get("port")
             web_addr = write_ssh_conf(device,port)
             command = "systemctl restart haproxy"
-            comm(command)
+            #comm(command)
             result = {
                 "status": "deployed successfully",
                 "public_site" : web_addr,
@@ -89,7 +95,12 @@ def flask_deployment():
         if "giturl" in request.args and "device" in request.args:
             giturl = request.args.get("giturl")
             device = request.args.get("device")
-            command = f"cat /root/opencloud_be/op_python.py | ssh {device} python3 - {giturl}"
+            port = request.args.get("port")
+            if port:
+                port = port
+            else:
+                port = "8022"
+            command = f"cat /root/opencloud_be/op_python.py | ssh {device} -p {port} python3 - {giturl}"
             output = comm(command)
             web_addr = write_http_conf(device,"8000")
             command = "systemctl restart haproxy"
@@ -97,7 +108,8 @@ def flask_deployment():
             result = {
                 "status": "deployed successfully",
                 "public_site" : web_addr,
-                "logs":output
+                "command" : command ,
+                "logs": output
             }
             return jsonify(result)
         else:
