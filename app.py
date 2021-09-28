@@ -46,10 +46,10 @@ def get_sshkey():
 @app.route("/certificate")
 def certificate_generation():
     if request.method == "POST" or request.method == "GET":
-        if "name"  in request.args and "email" in request.args :
-            name = request.args.get("name")
+        if "imei"  in request.args and "email" in request.args :
+            imei = request.args.get("imei")
             email = request.args.get("email")
-            return jsonify(gen_cert(name, email))
+            return jsonify(gen_cert(imei, email))
         else:
             result = {
                 "status": "parameters missing"
