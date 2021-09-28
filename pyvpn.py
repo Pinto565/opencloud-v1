@@ -6,7 +6,7 @@ from email.message import EmailMessage
 
 def cert_json(name , email , ip,status):
     op = {
-        "name" : name , 
+        "imei" : name , 
         "email" : email ,
         "ip_adress" : ip,
         "status" : status
@@ -17,7 +17,7 @@ def cert_json(name , email , ip,status):
 def send_mail(name,r_mail):
     s_mail = "infantvalan02@gmail.com"
     s_pass = "pmrdsejaymicrtoj"
-    message = f"Hello...{name} . Thank You For Registering . Find the VPN Certificate below"
+    message = f"Hello..User. Thank You For Registering . Find the VPN Certificate below"
     msg=EmailMessage()
     msg['Subject'] = "Mail From Opencloud"
     msg['From'] = "OpenCloud"
@@ -37,19 +37,19 @@ def send_mail(name,r_mail):
     except:
         print("Mail Not Sent")
 
-def gen_cert(name , email):
-    name = name #("Enter the Client Name > ")
+def gen_cert(imei , email):
+    imei = imei #("Enter the Client imei > ")
     # tun_ip = input("Enter Your Desired IP > ")
     # tun_ip = str(tun_ip)
     email = email #input("Enter your Mail Address > ")
-    lower_name = name.replace(" ","").lower()
+    lower_imei = imei.replace(" ","").lower()
     # try:
     tun_ip = generate_tun_ip()
-    process = subprocess.run(f"./vpn.sh {lower_name}",shell=True)
-    process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_name}",shell=True)
-    process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_name}.crt",shell=True)
-    send_mail(name,email)
-    op = cert_json(lower_name , email ,tun_ip, True)
+    process = subprocess.run(f"./vpn.sh {lower_imei}",shell=True)
+    process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_imei}",shell=True)
+    process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_imei}.crt",shell=True)
+    send_mail(imei,email)
+    op = cert_json(lower_imei , email ,tun_ip, True)
     return op
     # except:
     #     op = cert_json(lower_name , email ,tun_ip, False)
