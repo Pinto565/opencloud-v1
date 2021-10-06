@@ -5,7 +5,7 @@ from available import *
 from op_python import *
 from haproxy_conf import *
 from exec_comm import *
-from ports import *
+# from ports import *
 
 
 app = Flask(__name__)
