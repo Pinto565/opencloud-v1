@@ -9,7 +9,8 @@ directory = f"{directory}/deployments"
 cmd = subprocess.run(f"mkdir {directory}",capture_output=True,text=True,shell=True)
 print("Directory Created")
 git_url = sys.argv[-1]  #input("Enter the Git URL > ")
-status = requests.get(git_url).status_code
+url = git_url.split(".git")
+status = requests.get(git_url[0]).status_code
 if status == "200":
     if ".git" in git_url:
         print("Cloning the Github Repository")
