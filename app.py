@@ -10,12 +10,14 @@ from ports import *
 
 app = Flask(__name__)
 
+
 @app.after_request
 def after_request_func(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add('Access-Control-Allow-Headers', "*")
     response.headers.add('Access-Control-Allow-Methods', "*")
     return response
+
 
 @app.route('/')
 def hello_world():
@@ -31,22 +33,22 @@ def devices_available():
 @app.route("/ssh_key")
 def get_sshkey():
     try:
-        cmd = "cat /root/.ssh/id_rsa.pub"
+        cmd = "cat ~/.ssh/id_rsa.pub"
         output = {
-            "ssh_key" : comm(cmd)
+            "ssh_key": comm(cmd)
         }
         return jsonify(output)
     except:
         output = {
-            "ssh_key" : "failed"
+            "ssh_key": "failed"
         }
-        return jsonify(output)
+        return jsonify(output), 404
 
 
 @app.route("/certificate")
 def certificate_generation():
     if request.method == "POST" or request.method == "GET":
-        if "imei"  in request.args and "email" in request.args :
+        if "imei" in request.args and "email" in request.args:
             imei = request.args.get("imei")
             email = request.args.get("email")
             return jsonify(gen_cert(imei, email))
@@ -54,12 +56,12 @@ def certificate_generation():
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result)
+            return jsonify(result), 404
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result)
+        return jsonify(result), 404
 
 
 @app.route("/deploy/sshd")
@@ -68,25 +70,25 @@ def sshd_deployment():
         if "device" in request.args and "port" in request.args:
             device = request.args.get("device")
             port = request.args.get("port")
-            web_addr = write_ssh_conf(device,port)
+            web_addr = write_ssh_conf(device, port)
             command = "systemctl restart haproxy"
             comm(command)
             result = {
                 "status": "deployed successfully",
-                "public_site" : web_addr,
-                "type" : "ssh"
+                "public_site": web_addr,
+                "type": "ssh"
             }
             return jsonify(result)
         else:
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result)
+            return jsonify(result), 404
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result)
+        return jsonify(result), 404
 
 
 @app.route("/deploy/flask")
@@ -102,26 +104,27 @@ def flask_deployment():
                 port = "8022"
             command = f"cat /root/opencloud_be/op_python.py | ssh {device} -p {port} python3 - {giturl}"
             output = comm(command)
-            web_addr = write_http_conf(device,"8000")
-            command = "systemctl restart haproxy"
-            comm(command)
-            result = {
-                "status": "deployed successfully",
-                "public_site" : web_addr,
-                "command" : command ,
-                "logs": output
-            }
-            return jsonify(result)
+            if output:
+                web_addr = write_http_conf(device, "8000")
+                command = "systemctl restart haproxy"
+                comm(command)
+                result = {
+                    "status": "deployed successfully",
+                    "public_site": web_addr,
+                    "command": command,
+                    "logs": output
+                }
+                return jsonify(result)
         else:
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result)
+            return jsonify(result), 404
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result)
+        return jsonify(result), 404
 
 
 if __name__ == '__main__':
