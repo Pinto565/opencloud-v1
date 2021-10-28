@@ -1,6 +1,6 @@
 import subprocess
 import smtplib
-from ip_addr import *
+from tun_ip_generator import *
 from email.message import EmailMessage
 
 
@@ -23,7 +23,7 @@ def send_mail(name,r_mail):
     msg['From'] = "OpenCloud"
     msg['To'] = r_mail
     msg.set_content(message)
-    with open(f"/root/{name}.ovpn","rb") as file:
+    with open(f"~/{name}.ovpn","rb") as file:
         data = file.read()
         cert_name = f"{name}.ovpn"
         msg.add_attachment(data,maintype = "application", subtype = "ovpn",filename = cert_name)
@@ -38,22 +38,19 @@ def send_mail(name,r_mail):
         print("Mail Not Sent")
 
 def gen_cert(imei , email):
-    imei = imei #("Enter the Client imei > ")
-    # tun_ip = input("Enter Your Desired IP > ")
-    # tun_ip = str(tun_ip)
-    email = email #input("Enter your Mail Address > ")
+    imei = imei
+    email = email
     lower_imei = imei.replace(" ","").lower()
-    # try:
     tun_ip = generate_tun_ip()
     process = subprocess.run(f"./vpn.sh {lower_imei}",shell=True)
-    process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_imei}",shell=True)
-    process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_imei}.crt",shell=True)
-    send_mail(imei,email)
-    op = cert_json(lower_imei , email ,tun_ip, True)
+    if process.returncode == 0:
+        process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_imei}",shell=True)
+        process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_imei}.crt",shell=True)
+        send_mail(imei,email)
+        op = cert_json(lower_imei , email ,tun_ip, True)
+    else:
+        op = cert_json(lower_imei , email ,tun_ip, False)
     return op
-    # except:
-    #     op = cert_json(lower_name , email ,tun_ip, False)
-    #     return op
 
 def bad_request(reason):
     op = {

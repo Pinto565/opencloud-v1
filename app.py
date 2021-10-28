@@ -1,10 +1,10 @@
 from flask import *
-from ip_addr import *
-from pyvpn import *
-from available import *
-from op_python import *
-from haproxy_conf import *
-from exec_comm import *
+from tun_ip_generator import *
+from vpn_certificate_generator import *
+from devices_available import *
+from flask_deployment import *
+from haproxy_conf_adder import *
+from command_executor import *
 from ports import *
 
 
@@ -70,7 +70,7 @@ def sshd_deployment():
             port = request.args.get("port")
             web_addr = write_ssh_conf(device,port)
             command = "systemctl restart haproxy"
-            #comm(command)
+            comm(command)
             result = {
                 "status": "deployed successfully",
                 "public_site" : web_addr,
