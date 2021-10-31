@@ -2,7 +2,6 @@ from flask import *
 from tun_ip_generator import *
 from vpn_certificate_generator import *
 from devices_available import *
-from flask_deployment import *
 from haproxy_conf_adder import *
 from command_executor import *
 from ports import *
@@ -111,19 +110,19 @@ def flask_deployment():
                 port = port
             else:
                 port = "8022"
-            command = f"cat /root/opencloud_be/op_python.py | ssh {device} -p {port} python3 - {giturl}"
-            output = comm(command)
-            if output:
-                web_addr = write_http_conf(device, "8000")
-                command = "systemctl restart haproxy"
-                comm(command)
-                result = {
-                    "status": "deployed successfully",
-                    "public_site": web_addr,
-                    "command": command,
-                    "logs": output
-                }
-                return jsonify(result)
+            command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
+            # output = comm(command)
+            # if output:
+            #     web_addr = write_http_conf(device, "8000")
+            #     command = "systemctl restart haproxy"
+            #     comm(command)
+            #     result = {
+            #         "status": "deployed successfully",
+            #         "public_site": web_addr,
+            #         "command": command,
+            #         "logs": output
+            #     }
+            return jsonify(command)
         else:
             result = {
                 "status": "parameters missing"
