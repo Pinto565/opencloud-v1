@@ -8,7 +8,7 @@ def cert_json(name , email , ip,status):
     op = {
         "imei" : name , 
         "email" : email ,
-        "ip_adress" : ip,
+        "ip_address" : ip,
         "status" : status
     }
     return op
@@ -41,20 +41,14 @@ def gen_cert(imei , email):
     imei = imei
     email = email
     lower_imei = imei.replace(" ","").lower()
-    tun_ip = generate_tun_ip()
     process = subprocess.run(f"./vpn.sh {lower_imei}",shell=True)
     if process.returncode == 0:
+        tun_ip = generate_tun_ip()
         process = subprocess.run(f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_imei}",shell=True)
         process = subprocess.run(f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_imei}.crt",shell=True)
         send_mail(imei,email)
-        op = cert_json(lower_imei , email ,tun_ip, True)
+        op = cert_json(lower_imei , email ,tun_ip, "True")
     else:
-        op = cert_json(lower_imei , email ,tun_ip, False)
-    return op
-
-def bad_request(reason):
-    op = {
-        "status" : 200,
-        "comment" : reason
-    }
+        print("Failed")
+        op = cert_json(lower_imei , email ,"failed", "False")
     return op

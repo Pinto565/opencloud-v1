@@ -22,8 +22,8 @@ def after_request_func(response):
 @app.route('/')
 def hello_world():
     result = {
-                "status": "Api is Up And Running"
-            }
+        "status": "Api is Up And Running"
+    }
     return jsonify(result)
 
 
@@ -57,14 +57,20 @@ def certificate_generation():
             return jsonify(gen_cert(imei, email))
         else:
             result = {
-                "status": "parameters missing"
+                "imei": "not provided",
+                "email": "not provided",
+                "ip_address": "failed",
+                "status": "failed"
             }
-            return jsonify(result)
+            return jsonify(result), 404
     else:
         result = {
+            "imei": "not provided",
+            "email": "not provided",
+            "ip_address": "failed",
             "status": "method not allowed"
         }
-        return jsonify(result)
+        return jsonify(result), 404
 
 
 @app.route("/deploy/sshd")

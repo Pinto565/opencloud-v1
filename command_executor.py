@@ -5,3 +5,5 @@ def comm(cmd):
     if process.returncode == 0:
         op = process.stdout.strip()
         return op
+    else : 
+        return "Failed"
