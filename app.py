@@ -21,7 +21,10 @@ def after_request_func(response):
 
 @app.route('/')
 def hello_world():
-    return "Opencloud API is up and running"
+    result = {
+                "status": "Api is Up And Running"
+            }
+    return jsonify(result)
 
 
 @app.route("/devices/available")
@@ -42,7 +45,7 @@ def get_sshkey():
         output = {
             "ssh_key": "failed"
         }
-        return jsonify(output), 404
+        return jsonify(output)
 
 
 @app.route("/certificate")
@@ -56,12 +59,12 @@ def certificate_generation():
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result), 404
+            return jsonify(result)
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result), 404
+        return jsonify(result)
 
 
 @app.route("/deploy/sshd")
@@ -83,12 +86,12 @@ def sshd_deployment():
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result), 404
+            return jsonify(result)
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result), 404
+        return jsonify(result)
 
 
 @app.route("/deploy/flask")
@@ -119,12 +122,12 @@ def flask_deployment():
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result), 404
+            return jsonify(result)
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result), 404
+        return jsonify(result)
 
 
 if __name__ == '__main__':
