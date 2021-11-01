@@ -46,7 +46,7 @@ def get_sshkey():
         output = {
             "ssh_key": "failed"
         }
-        return jsonify(output)
+        return jsonify(output), 404
 
 
 @app.route("/certificate")
@@ -93,12 +93,12 @@ def sshd_deployment():
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result)
+            return jsonify(result), 404
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result)
+        return jsonify(result), 404
 
 
 @app.route("/deploy/flask")
@@ -110,38 +110,38 @@ def flask_deployment():
             device = request.args.get("device").replace(" ", "")
             port = request.args.get("port").replace(" ", "")
             if giturl != empty and device != empty:
-                if port != empty : 
+                if port != empty:
                     port = port
                 else:
                     port = "8022"
-            command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
-            output = comm(command)
-            if output:
-                web_addr = write_http_conf(device, "8000")
-                command = "systemctl restart haproxy"
-                comm(command)
-                result = {
-                    "status": "deployed successfully",
-                    "public_site": web_addr,
-                    "command": command,
-                    "logs": output
-                }
-                return jsonify(result)
+                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
+                output = comm(command)
+                if output:
+                    web_addr = write_http_conf(device, "8000")
+                    command = "systemctl restart haproxy"
+                    comm(command)
+                    result = {
+                        "status": "deployed successfully",
+                        "public_site": web_addr,
+                        "command": command,
+                        "logs": output
+                    }
+                    return jsonify(result)
             else:
                 result = {
-                    "status": "giturl device parameters missing"
+                    "status": "Some Parameters Missing"
                 }
-            return jsonify(result)
+            return jsonify(result), 404
         else:
             result = {
                 "status": "parameters missing"
             }
-            return jsonify(result)
+            return jsonify(result), 404
     else:
         result = {
             "status": "method not allowed"
         }
-        return jsonify(result)
+        return jsonify(result), 404
 
 
 if __name__ == '__main__':
