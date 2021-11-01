@@ -53,9 +53,13 @@ def get_sshkey():
 def certificate_generation():
     if request.method == "POST" or request.method == "GET":
         if "imei" in request.args and "email" in request.args:
+            empty = ""
             imei = request.args.get("imei")
             email = request.args.get("email")
-            return jsonify(gen_cert(imei, email))
+            if imei != empty and email != empty:
+                return jsonify(gen_cert(imei, email))
+            else:
+                return "Some Parameters Missing"
         else:
             result = {
                 "imei": "not provided",
