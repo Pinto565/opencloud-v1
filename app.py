@@ -1,3 +1,4 @@
+from os import device_encoding
 from flask import *
 from tun_ip_generator import *
 from vpn_certificate_generator import *
@@ -104,13 +105,15 @@ def sshd_deployment():
 def flask_deployment():
     if request.method == "POST" or request.method == "GET":
         if "giturl" in request.args and "device" in request.args:
-            giturl = request.args.get("giturl")
-            device = request.args.get("device")
-            port = request.args.get("port")
-            if port:
-                port = port
-            else:
-                port = "8022"
+            empty = ""
+            giturl = request.args.get("giturl").replace(" ", "")
+            device = request.args.get("device").replace(" ", "")
+            port = request.args.get("port").replace(" ", "")
+            if giturl != empty and device != empty:
+                if port != empty : 
+                    port = port
+                else:
+                    port = "8022"
             command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
             output = comm(command)
             if output:
@@ -124,6 +127,11 @@ def flask_deployment():
                     "logs": output
                 }
                 return jsonify(result)
+            else:
+                result = {
+                    "status": "giturl device parameters missing"
+                }
+            return jsonify(result)
         else:
             result = {
                 "status": "parameters missing"
