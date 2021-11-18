@@ -118,11 +118,10 @@ def flask_deployment():
                     port = port
                 else:
                     port = "8022"
-                dev_port = port_allocation()
-                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}--{dev_port}"
+                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
                 output = comm(command)
                 if output:
-                    web_addr = write_http_conf(device, dev_port)
+                    web_addr = write_http_conf(device, "8000")
                     command = "systemctl restart haproxy"
                     comm(command)
                     result = {
