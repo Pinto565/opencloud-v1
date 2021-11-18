@@ -59,7 +59,7 @@ def certificate_generation():
             if imei != empty and email != empty:
                 return jsonify(gen_cert(imei, email))
             else:
-                return "Some Parameters Missing"
+                return jsonify({"status": "Some Parameters Missing"}), 404
         else:
             result = {
                 "imei": "not provided",
