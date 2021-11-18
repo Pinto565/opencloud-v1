@@ -8,8 +8,8 @@ directory = f"{directory}/deployments"
 cmd = subprocess.run(f"mkdir {directory}",
                      capture_output=True, text=True, shell=True)
 print("Directory Created")
-git_url = sys.argv[-2]
-dev_port = sys.argv[-1]
+git_url = sys.argv[1]
+dev_port = sys.argv[2]
 if ".git" in git_url:
     print("Cloning the Github Repository")
     try:
