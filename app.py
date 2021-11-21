@@ -107,7 +107,7 @@ def sshd_deployment():
 
 @app.route("/deploy/flask")
 def flask_deployment():
-    if request.method == "POST" or request.method == "GET":
+    if request.method == "GET":
         if "giturl" in request.args and "device" in request.args:
             empty = ""
             giturl = request.args.get("giturl").replace(" ", "")
@@ -118,12 +118,11 @@ def flask_deployment():
                     port = port
                 else:
                     port = "8022"
-                dev_port = int(port_allocation())
-                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl} {dev_port}"
+                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
                 print(command)
                 output = comm(command)
                 if output != "Failed":
-                    web_addr = write_http_conf(device, dev_port)
+                    web_addr = write_http_conf(device, "8080")
                     command = "systemctl restart haproxy"
                     comm(command)
                     result = {

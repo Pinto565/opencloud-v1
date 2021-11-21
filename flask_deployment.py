@@ -7,9 +7,7 @@ directory = cmd.stdout.strip()
 directory = f"{directory}/deployments"
 cmd = subprocess.run(f"mkdir {directory}",capture_output=True,text=True,shell=True)
 print("Directory Created")
-command_args = str(sys.argv)
-git_url = command_args[-2]
-dev_port = command_args[-1]
+git_url = sys.argv[-2]
 if ".git" in git_url:
     print("Cloning the Github Repository")
     try:
@@ -35,9 +33,9 @@ if ".git" in git_url:
                             if list[0] == "gunicorn":
                                 arg1 = list[0].replace(list[0],f"{git_directory}/venv/bin/{list[0]}")
                                 arg2 = list[-1]
-                                entrypoint = (f"{arg1} {arg2} --bind 0.0.0.0:{dev_port}")
+                                entrypoint = (f"{arg1} {arg2} --bind 0.0.0.0:8080")
                                 entrypoint = (f"cd {git_directory} && {entrypoint} --daemon")
-                                print(f"Your Application is Running on 0.0.0.0:{dev_port}")
+                                print(f"Your Application is Running on 0.0.0.0:8080")
                                 cmd = subprocess.run(entrypoint,shell=True)
                     except:
                         print("Application Failed..")
