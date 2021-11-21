@@ -118,10 +118,12 @@ def flask_deployment():
                     port = port
                 else:
                     port = "8022"
-                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl}"
+                dev_port = int(port_allocation())
+                command = f"cat {os.getcwd()}/flask_deployment.py | ssh {device} -p {port} python3 - {giturl} {dev_port}"
+                print(command)
                 output = comm(command)
-                if output:
-                    web_addr = write_http_conf(device, "8000")
+                if output != "Failed":
+                    web_addr = write_http_conf(device, dev_port)
                     command = "systemctl restart haproxy"
                     comm(command)
                     result = {
@@ -131,11 +133,16 @@ def flask_deployment():
                         "logs": output
                     }
                     return jsonify(result)
+                else:
+                    result = {
+                        "status": "failed"
+                    }
+                    return jsonify(result), 404
             else:
                 result = {
                     "status": "Some Parameters Missing"
                 }
-            return jsonify(result), 404
+                return jsonify(result), 404
         else:
             result = {
                 "status": "parameters missing"
