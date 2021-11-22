@@ -14,7 +14,7 @@ def cert_json(name, email, ip, status):
     return op
 
 
-def send_mail(name, r_mail):
+def send_mail(imei, r_mail):
     s_mail = "infantvalan02@gmail.com"
     s_pass = "pmrdsejaymicrtoj"
     message = f"Hello..User. Thank You For Registering . Find the VPN Certificate below"
@@ -23,11 +23,11 @@ def send_mail(name, r_mail):
     msg['From'] = "infantvalan02@gmail.com"
     msg['To'] = r_mail
     msg.set_content(message)
-    with open(f"~/{name}.ovpn", "rb") as file:
+    with open(f"~/{imei}.ovpn", "rb") as file:
         data = file.read()
-        cert_name = f"{name}.ovpn"
+        cert_imei = f"{imei}.ovpn"
         msg.add_attachment(data, maintype="application",
-                           subtype="ovpn", filename=cert_name)
+                           subtype="ovpn", filename=cert_imei)
     server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
     try:
         server.login(s_mail, s_pass)
@@ -50,7 +50,7 @@ def gen_cert(imei, email):
             f"echo \"ifconfig-push {tun_ip} 255.255.255.0\" > /etc/openvpn/ccd/{lower_imei}", shell=True)
         process = subprocess.run(
             f"openssl x509 -subject -noout -in /etc/openvpn/easy-rsa/pki/issued/{lower_imei}.crt", shell=True)
-        send_mail(imei, email)
+        send_mail(lower_imei, email)
         op = cert_json(lower_imei, email, tun_ip, "True")
     else:
         print("Failed")
