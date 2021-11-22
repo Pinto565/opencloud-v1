@@ -23,7 +23,7 @@ def send_mail(imei, r_mail):
     msg['From'] = "infantvalan02@gmail.com"
     msg['To'] = r_mail
     msg.set_content(message)
-    with open(f"~/{imei}.ovpn", "rb") as file:
+    with open(f"/root/{imei}.ovpn", "rb") as file:
         data = file.read()
         cert_imei = f"{imei}.ovpn"
         msg.add_attachment(data, maintype="application",
